@@ -159,12 +159,18 @@ encoder_dis_cmd=[17]
 flow_read_cmd=[12]
 flow_disable_cmd=[13]
 flow_en_cmd=[18]
+int_en_cmd=[100]
+int_dis_cmd=[101]
+int_read_cmd=[102]
 # This allows us to be more specific about which commands contain unused bytes
 unused = 0
 retries = 10
 # Function declarations of the various functions used for encoding and sending
 # data from RPi to Arduino
 
+INT_MODE_CHANGE = 1
+INT_MODE_FALLING = 2
+INT_MODE_RISING = 3
 
 # Write I2C block
 def write_i2c_block(address, block):
@@ -595,3 +601,21 @@ def flowRead():
 		return [data_back[0],data_back[2]*256+data_back[1]]
 	else:
 		return [-1,-1]
+
+def intEnable(num, mode):
+	write_i2c_block(address, int_en_cmd + [num, mode, unused])
+	time.sleep(.2)
+
+def intDisable(num):
+	write_i2c_block(address, int_dis_cmd + [num, unused, unused])
+	time.sleep(.2)
+
+def intRead(num):
+	write_i2c_block(address, int_read_cmd + [num, unused, unused])
+	time.sleep(.2)
+	cnt = read_i2c_byte(address)
+	return cnt
+
+def testtest():
+	print("testtest")
+

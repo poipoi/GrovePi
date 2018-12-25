@@ -55,12 +55,10 @@ class motor_driver:
 		MotorSpeedA=self.map_vals(MotorSpeedA,0,100,0,255)
 		MotorSpeedB=self.map_vals(MotorSpeedB,0,100,0,255)
 		bus.write_i2c_block_data(self.I2CMotorDriverAdd, self.MotorSpeedSet, [MotorSpeedA,MotorSpeedB])
-		time.sleep(.02)
 
 	#Set motor direction
 	def MotorDirectionSet(self,Direction):
 		bus.write_i2c_block_data(self.I2CMotorDriverAdd, self.DirectionSet, [Direction,0])
-		time.sleep(.02)
 
 if __name__ == "__main__":
 	m= motor_driver()

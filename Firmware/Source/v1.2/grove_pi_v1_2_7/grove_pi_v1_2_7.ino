@@ -25,6 +25,10 @@ ChainableLED rgbled[6];   // 7 instances for D2-D8
 #define flow_en_cmd				18
 #define flow_dis_cmd       		13
 
+#define int_en_cmd        (100)
+#define int_dis_cmd       (101)
+#define int_read_cmd      (102)
+
 int cmd[5];
 int index=0;
 int flag=0;
@@ -59,6 +63,10 @@ int hallsensor = 2;    //The pin location of the sensor
 int flow_run_bk=0;
 long flow_read_start;
 byte flow_val[3];        //Given it's own I2C buffer so that it does not corrupt the data from other sensors when running in background 
+
+volatile uint8_t int0Cnt;
+volatile uint8_t int1Cnt;
+volatile uint8_t intReadCnt;
 
 void setup()
 {
@@ -536,6 +544,50 @@ void loop()
 			detachInterrupt(0);
 			cmd[0]=0;
 		}
+    else if(cmd[0]==int_en_cmd)
+    {
+      uint8_t num = cmd[1];
+      uint8_t mode = cmd[2];
+      void (*callback)(void) = NULL;
+      if ((num == 0) || (num == 1)) {
+        if ((mode == CHANGE) || (mode == FALLING) || (mode == RISING)) {
+          switch (num) {
+            case 0:
+              int0Cnt = 0;
+              callback = int0_callback;
+              break;
+            case 1:
+              int1Cnt = 0;
+              callback = int1_callback;
+              break;
+          }
+          attachInterrupt(num, callback, mode);
+        }
+      }
+    }
+    else if(cmd[0]==int_dis_cmd)
+    {
+      uint8_t num = cmd[1];
+      if ((num == 0) || (num == 1)) {
+        detachInterrupt(num);
+      }
+    }
+    else if(cmd[0]==int_read_cmd)
+    {
+      uint8_t num = cmd[1];
+      if ((num == 0) || (num == 1)) {
+        switch (num) {
+          case 0:
+            intReadCnt = int0Cnt;
+            int0Cnt = 0;
+            break;
+          case 1:
+            intReadCnt = int1Cnt;
+            int1Cnt = 0;
+            break;
+        }
+      }
+    }
 	}
     //Dust sensor can run in background so has a dedicated if condition
     if(dust_run_bk)
@@ -638,7 +690,11 @@ void sendData()
     flow_val[0]=0;
 	cmd[0]=0;
   }
-  
+  if(cmd[0]==int_read_cmd)
+  {
+    Wire.write(intReadCnt);
+    cmd[0]=0;
+  }
 }
 
 //ISR for the flow sensor
@@ -671,4 +727,12 @@ void readPulseDust()
     lowpulseoccupancy = lowpulseoccupancy+duration;   // Add to the pulse length.
     pulse_end = 0;    // If you don't reset this, you'll keep adding the pulse length over and over.
   }
+}
+
+void int0_callback() {
+  int0Cnt++;
+}
+
+void int1_callback() {
+  int1Cnt++;
 }
