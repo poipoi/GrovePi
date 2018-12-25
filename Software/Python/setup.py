@@ -112,7 +112,7 @@ setuptools.setup(
     'Topic :: Software Development :: Embedded Systems',
     'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    url = "https://github.com/DexterInd/GrovePi",
+    url = "https://github.com/poipoi/GrovePi.git",
 
     keywords = ['robot', 'grovepi', 'grovepi+', 'dexter industries', 'learning', 'education', 'iot', 'internet of things', 'prototyping'],
 

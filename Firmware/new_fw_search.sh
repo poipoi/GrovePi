@@ -14,7 +14,7 @@ else
 	exit 0
 fi
 
-wget https://raw.github.com/DexterInd/GrovePi/master/Firmware/version.txt -O temp_f &>/dev/null
+wget https://raw.githubusercontent.com/poipoi/GrovePi/master/Firmware/version.txt -O temp_f &>/dev/null
 diff -q version.txt temp_f
 if [[ $? == "0" ]]
 then
