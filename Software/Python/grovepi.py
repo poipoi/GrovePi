@@ -604,15 +604,12 @@ def flowRead():
 
 def intEnable(num, mode):
 	write_i2c_block(address, int_en_cmd + [num, mode, unused])
-	time.sleep(.2)
 
 def intDisable(num):
 	write_i2c_block(address, int_dis_cmd + [num, unused, unused])
-	time.sleep(.2)
 
 def intRead(num):
 	write_i2c_block(address, int_read_cmd + [num, unused, unused])
-	time.sleep(.2)
 	cnt = read_i2c_byte(address)
 	return cnt
 
