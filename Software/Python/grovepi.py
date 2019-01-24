@@ -222,7 +222,7 @@ def pinMode(pin, mode):
 		write_i2c_block(address, pMode_cmd + [pin, 1, unused])
 	elif mode == "INPUT":
 		write_i2c_block(address, pMode_cmd + [pin, 0, unused])
-	elif mode == "INPUT_PULLUP"
+	elif mode == "INPUT_PULLUP":
 	    write_i2c_block(address, pMode_cmd + [pin, 2, unused])
 	return 1
 
